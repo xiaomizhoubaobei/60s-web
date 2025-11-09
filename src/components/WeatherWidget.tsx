@@ -74,7 +74,26 @@ export default function WeatherWidget() {
   ])
 
   // 移除了未使用的 langLoading 状态
-  // fetchWeather 函数已被内联到 useEffect 中
+  const fetchWeather = async () => {
+    setLoading(true);
+    setWeatherError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.code === 200) {
+        setWeather(data.data);
+      } else {
+        throw new Error(data.msg || '获取天气数据失败');
+      }
+    } catch (err) {
+      setWeatherError(err instanceof Error ? err.message : '未知错误');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const translateText = async () => {
     if (!sourceText.trim()) {
@@ -107,29 +126,23 @@ export default function WeatherWidget() {
   }
 
   useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.code === 200) {
-          return data.data;
-        } else {
-          throw new Error(data.msg || '获取天气数据失败');
-        }
-      } catch (err) {
-        throw err;
-      }
-    };
-
     const fetchData = async () => {
       setLoading(true);
       try {
         // 使用 Promise.all 并行执行两个异步操作
         const [weatherData, supportedLanguages] = await Promise.all([
-          fetchWeatherData(),
+          fetch(`${API_BASE_URL}/weather?city=北京`).then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          }).then(data => {
+            if (data.code === 200) {
+              return data.data;
+            } else {
+              throw new Error(data.msg || '获取天气数据失败');
+            }
+          }),
           getSupportedLanguages()
         ]);
         setWeather(weatherData);
