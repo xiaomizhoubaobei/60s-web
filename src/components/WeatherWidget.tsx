@@ -75,23 +75,15 @@ export default function WeatherWidget() {
 
   // 移除了未使用的 langLoading 状态
   const fetchWeather = async () => {
-    setLoading(true);
-    setWeatherError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      if (data.code === 200) {
-        setWeather(data.data);
-      } else {
-        throw new Error(data.msg || '获取天气数据失败');
-      }
-    } catch (err) {
-      setWeatherError(err instanceof Error ? err.message : '未知错误');
-    } finally {
-      setLoading(false);
+    const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (data.code === 200) {
+      return data.data;
+    } else {
+      throw new Error(data.msg || '获取天气数据失败');
     }
   };
 
@@ -131,18 +123,7 @@ export default function WeatherWidget() {
       try {
         // 使用 Promise.all 并行执行两个异步操作
         const [weatherData, supportedLanguages] = await Promise.all([
-          fetch(`${API_BASE_URL}/weather?city=北京`).then(response => {
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-          }).then(data => {
-            if (data.code === 200) {
-              return data.data;
-            } else {
-              throw new Error(data.msg || '获取天气数据失败');
-            }
-          }),
+          fetchWeather(),
           getSupportedLanguages()
         ]);
         setWeather(weatherData);
@@ -170,11 +151,22 @@ export default function WeatherWidget() {
           </div>
         )}
         
-        {weatherError && (
-          <div className="widget-error">
-            <p>❌ {weatherError}</p>
-            <button onClick={fetchWeather}>重试</button>
-          </div>
+        {weatherError && (
+          <div className="widget-error">
+            <p>❌ {weatherError}</p>
+            <button onClick={async () => {
+              setLoading(true);
+              setWeatherError(null);
+              try {
+                const weatherData = await fetchWeather();
+                setWeather(weatherData);
+              } catch (error) {
+                setWeatherError(error instanceof Error ? error.message : '未知错误');
+              } finally {
+                setLoading(false);
+              }
+            }}>重试</button>
+          </div>
         )}
         
         {weather && !loading && (
