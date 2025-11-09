@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
-import './WeatherWidget.css'
+import { useState, useEffect } from 'react'
+
+import './WeatherWidget.css'
+
 import { API_BASE_URL, getSupportedLanguages } from '@/lib/api'
 
 interface WeatherData {
@@ -70,21 +72,17 @@ export default function WeatherWidget() {
     { code: 'es', name: '西班牙语' },
     { code: 'ru', name: '俄语' }
   ])
-  const [langLoading, setLangLoading] = useState(true)
 
+  // 移除了未使用的 langLoading 状态
   const fetchWeather = async () => {
     setLoading(true)
     setWeatherError(null)
-    
     try {
       const response = await fetch(`${API_BASE_URL}/weather?city=北京`)
-      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
       const data = await response.json()
-      
       if (data.code === 200) {
         setWeather(data.data)
       } else {
@@ -117,13 +115,10 @@ export default function WeatherWidget() {
       const response = await fetch(
         `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
       )
-      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
       const data: TranslationResponse = await response.json()
-      
       if (data.code === 200) {
         setTranslation(data.data)
       } else {
@@ -137,31 +132,28 @@ export default function WeatherWidget() {
     }
   }
 
-  useEffect(() => {
-    fetchWeather()
-  }, [])
-
-  useEffect(() => {
-    const loadLanguages = async () => {
-      try {
-        const supportedLanguages = await getSupportedLanguages()
-        setLanguages(supportedLanguages)
-        setLangLoading(false)
-      } catch (error) {
-        console.error('加载语言列表失败:', error)
-        setLangLoading(false)
-      }
-    }
-
-    loadLanguages()
-  }, [])
-
-  return (
+  useEffect(() => {
+    fetchWeather()
+  }, [])
+  useEffect(() => {
+    const loadLanguages = async () => {
+      try {
+        const supportedLanguages = await getSupportedLanguages()
+        setLanguages(supportedLanguages)
+        setLoading(false)
+      } catch (error) {
+        console.error('加载语言列表失败:', error)
+        setLoading(false)
+      }
+    }
+    loadLanguages()
+  }, [])
+
+  return (
     <div className="weather-widget">
       {/* 天气信息卡片 */}
       <section className="widget-section">
         <h2>🌤️ 天气信息</h2>
-        
         {loading && (
           <div className="widget-loading">
             <div className="small-spinner"></div>
