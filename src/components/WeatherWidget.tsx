@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
-import './WeatherWidget.css'
+import { useState, useEffect } from 'react'
+
+import './WeatherWidget.css'
+
 import { API_BASE_URL, getSupportedLanguages } from '@/lib/api'
 
 interface WeatherData {
@@ -70,98 +72,84 @@ export default function WeatherWidget() {
     { code: 'es', name: '西班牙语' },
     { code: 'ru', name: '俄语' }
   ])
-  const [langLoading, setLangLoading] = useState(true)
 
-  const fetchWeather = async () => {
-    setLoading(true)
-    setWeatherError(null)
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/weather?city=北京`)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.code === 200) {
-        setWeather(data.data)
-      } else {
-        throw new Error(data.msg || '获取天气数据失败')
-      }
-    } catch (err) {
-      setWeatherError(err instanceof Error ? err.message : '未知错误')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // 移除了未使用的 langLoading 状态
+  // fetchWeather 函数已被内联到 useEffect 中
 
-  const translateText = async () => {
-    if (!sourceText.trim()) {
-      setTranslationError('请输入要翻译的文本')
-      return
-    }
-
-    // 验证目标语言参数
-    const validTargetLangs = languages.map(lang => lang.code)
-    if (!validTargetLangs.includes(targetLang)) {
-      setTranslationError('不支持的目标语言')
-      return
-    }
-
-    setTranslating(true)
-    setTranslationError(null)
-    
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
-      )
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data: TranslationResponse = await response.json()
-      
-      if (data.code === 200) {
-        setTranslation(data.data)
-      } else {
-        throw new Error(data.msg || '翻译失败')
-      }
-    } catch (err) {
-      setTranslationError(err instanceof Error ? err.message : '未知错误')
-      setTranslation(null)
-    } finally {
-      setTranslating(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchWeather()
-  }, [])
-
-  useEffect(() => {
-    const loadLanguages = async () => {
-      try {
-        const supportedLanguages = await getSupportedLanguages()
-        setLanguages(supportedLanguages)
-        setLangLoading(false)
-      } catch (error) {
-        console.error('加载语言列表失败:', error)
-        setLangLoading(false)
-      }
+  const translateText = async () => {
+    if (!sourceText.trim()) {
+      setTranslationError('请输入要翻译的文本')
+      return
     }
 
-    loadLanguages()
-  }, [])
+    setTranslating(true)
+    setTranslationError(null)
+    
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data: TranslationResponse = await response.json()
+      if (data.code === 200) {
+        setTranslation(data.data)
+      } else {
+        throw new Error(data.msg || '翻译失败')
+      }
+    } catch (err) {
+      setTranslationError(err instanceof Error ? err.message : '未知错误')
+      setTranslation(null)
+    } finally {
+      setTranslating(false)
+    }
+  }
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.code === 200) {
+          return data.data;
+        } else {
+          throw new Error(data.msg || '获取天气数据失败');
+        }
+      } catch (err) {
+        throw err;
+      }
+    };
 
-  return (
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // 使用 Promise.all 并行执行两个异步操作
+        const [weatherData, supportedLanguages] = await Promise.all([
+          fetchWeatherData(),
+          getSupportedLanguages()
+        ]);
+        setWeather(weatherData);
+        setLanguages(supportedLanguages);
+      } catch (error) {
+        setWeatherError(error instanceof Error ? error.message : '未知错误');
+      } finally {
+        // 确保无论成功还是失败都停止加载状态
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
     <div className="weather-widget">
       {/* 天气信息卡片 */}
       <section className="widget-section">
         <h2>🌤️ 天气信息</h2>
-        
         {loading && (
           <div className="widget-loading">
             <div className="small-spinner"></div>
