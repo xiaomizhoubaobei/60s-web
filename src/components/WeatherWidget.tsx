@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './WeatherWidget.css'
+import { API_BASE_URL } from '@/lib/api'
 
 interface WeatherData {
   location: {
@@ -76,7 +77,7 @@ export default function WeatherWidget() {
     setWeatherError(null)
     
     try {
-      const response = await fetch('/api/weather?city=北京')
+      const response = await fetch(`${API_BASE_URL}/weather?city=北京`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -107,7 +108,7 @@ export default function WeatherWidget() {
     
     try {
       const response = await fetch(
-        `/api/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
+        `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
       )
       
       if (!response.ok) {

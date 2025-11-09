@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './DetailPage.css'
+import { API_BASE_URL } from '@/lib/api'
 
 interface NewsItem {
   title: string
@@ -49,22 +50,22 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
       
       switch(categoryId) {
         case '60s':
-          apiUrl = '/api/60s'
+          apiUrl = `${API_BASE_URL}/60s`
           break
         case 'weibo':
-          apiUrl = '/api/weibo'
+          apiUrl = `${API_BASE_URL}/weibo`
           break
         case 'zhihu':
-          apiUrl = '/api/zhihu'
+          apiUrl = `${API_BASE_URL}/zhihu`
           break
         case 'baidu':
-          apiUrl = '/api/baidu'
+          apiUrl = `${API_BASE_URL}/baidu`
           break
         case 'douyin':
-          apiUrl = '/api/douyin'
+          apiUrl = `${API_BASE_URL}/douyin`
           break
         case 'weather':
-          apiUrl = '/api/weather?city=北京'
+          apiUrl = `${API_BASE_URL}/weather?city=北京`
           break
         case 'translate':
           // 翻译API需要参数，这里先不调用
@@ -72,7 +73,7 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
           setLoading(false)
           return
         default:
-          apiUrl = '/api/60s'
+          apiUrl = `${API_BASE_URL}/60s`
       }
 
       console.log('正在请求:', apiUrl)
@@ -269,7 +270,7 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
     
     try {
       const response = await fetch(
-        `/api/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
+        `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
       )
       
       if (!response.ok) {
