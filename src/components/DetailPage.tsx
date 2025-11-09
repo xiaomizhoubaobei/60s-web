@@ -111,21 +111,22 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
     }
   }, [categoryId])
 
-  useEffect(() => {
-    const loadLanguages = async () => {
-      try {
-        const supportedLanguages = await getSupportedLanguages()
-        setLanguages(supportedLanguages)
-        setLoading(false)
-      } catch (error) {
-        console.error('加载语言列表失败:', error)
-        setLoading(false)
-      }
-    }
-
-    if (categoryId === 'translate') {
-      loadLanguages()
-    }
+  useEffect(() => {
+    const loadLanguages = async () => {
+      setLangLoading(true);
+      try {
+        const supportedLanguages = await getSupportedLanguages()
+        setLanguages(supportedLanguages)
+      } catch (error) {
+        console.error('加载语言列表失败:', error)
+      } finally {
+        setLangLoading(false)
+      }
+    }
+
+    if (categoryId === 'translate') {
+      loadLanguages()
+    }
   }, [categoryId])
 
   const formatDate = (dateString?: string) => {
@@ -253,23 +254,22 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
     </div>
   )
 
-  // Translation state (moved outside renderTranslateSection)
-  const [sourceText, setSourceText] = useState('')
-  const [translation, setTranslation] = useState<any>(null)
-  const [translating, setTranslating] = useState(false)
-  const [translationError, setTranslationError] = useState<string | null>(null)
-  const [targetLang, setTargetLang] = useState('en')
-  const [languages, setLanguages] = useState<{ code: string; name: string }[]>([
-    { code: 'en', name: '英语' },
-    { code: 'ja', name: '日语' },
-    { code: 'ko', name: '韩语' },
-    { code: 'fr', name: '法语' },
-    { code: 'de', name: '德语' },
-    { code: 'es', name: '西班牙语' },
-    { code: 'ru', name: '俄语' }
-  ])
-
-  // 移除了未使用的 langLoading 状态
+  // Translation state (moved outside renderTranslateSection)
+  const [sourceText, setSourceText] = useState('')
+  const [translation, setTranslation] = useState<any>(null)
+  const [translating, setTranslating] = useState(false)
+  const [translationError, setTranslationError] = useState<string | null>(null)
+  const [targetLang, setTargetLang] = useState('en')
+  const [languages, setLanguages] = useState<{ code: string; name: string }[]>([
+    { code: 'en', name: '英语' },
+    { code: 'ja', name: '日语' },
+    { code: 'ko', name: '韩语' },
+    { code: 'fr', name: '法语' },
+    { code: 'de', name: '德语' },
+    { code: 'es', name: '西班牙语' },
+    { code: 'ru', name: '俄语' }
+  ])
+  const [langLoading, setLangLoading] = useState(true)
   const translateText = async () => {
     if (!sourceText.trim()) {
       setTranslationError('请输入要翻译的文本')
@@ -306,65 +306,74 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
     }
   }
 
-  const renderTranslateSection = () => {
-    return (
-      <div className="translate-section">
-        <div className="translation-form">
-          <div className="form-group">
-            <label htmlFor="source-text">输入文本：</label>
-            <textarea
-              id="source-text"
-              value={sourceText}
-              onChange={(e) => setSourceText(e.target.value)}
-              placeholder="请输入要翻译的中文文本..."
-              rows={4}
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="target-lang">目标语言：</label>
-            <select
-              id="target-lang"
-              value={targetLang}
-              onChange={(e) => setTargetLang(e.target.value)}
-            >
-              {languages.map(lang => (
-                <option key={lang.code} value={lang.code}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <button 
-            className="translate-btn"
-            onClick={translateText}
-            disabled={translating || !sourceText.trim()}
-          >
-            {translating ? '翻译中...' : '开始翻译'}
-          </button>
-        </div>
-        
-        {translationError && (
-          <div className="widget-error">
-            <p>❌ {translationError}</p>
-          </div>
-        )}
-        
-        {translation && (
-          <div className="translation-result">
-            <div className="result-item">
-              <h4>原文：</h4>
-              <p>{translation.original_text}</p>
-            </div>
-            <div className="result-item">
-              <h4>译文 ({languages.find(l => l.code === translation.target_lang)?.name})：</h4>
-              <p>{translation.translated_text}</p>
-            </div>
-          </div>
-        )}
-      </div>
-    )
+  const renderTranslateSection = () => {
+    return (
+      <div className="translate-section">
+        {langLoading ? (
+          <div className="loading">
+            <div className="spinner"></div>
+            <p>正在加载语言列表...</p>
+          </div>
+        ) : (
+          <>
+            <div className="translation-form">
+              <div className="form-group">
+                <label htmlFor="source-text">输入文本：</label>
+                <textarea
+                  id="source-text"
+                  value={sourceText}
+                  onChange={(e) => setSourceText(e.target.value)}
+                  placeholder="请输入要翻译的中文文本..."
+                  rows={4}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="target-lang">目标语言：</label>
+                <select
+                  id="target-lang"
+                  value={targetLang}
+                  onChange={(e) => setTargetLang(e.target.value)}
+                >
+                  {languages.map(lang => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <button 
+                className="translate-btn"
+                onClick={translateText}
+                disabled={translating || !sourceText.trim()}
+              >
+                {translating ? '翻译中...' : '开始翻译'}
+              </button>
+            </div>
+            
+            {translationError && (
+              <div className="widget-error">
+                <p>❌ {translationError}</p>
+              </div>
+            )}
+            
+            {translation && (
+              <div className="translation-result">
+                <div className="result-item">
+                  <h4>原文：</h4>
+                  <p>{translation.original_text}</p>
+                </div>
+                <div className="result-item">
+                  <h4>译文 ({languages.find(l => l.code === translation.target_lang)?.name})：</h4>
+                  <p>{translation.translated_text}</p>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    )
   }
 
   return (
