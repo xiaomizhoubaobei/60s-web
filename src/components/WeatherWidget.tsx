@@ -74,7 +74,18 @@ export default function WeatherWidget() {
   ])
 
   // 移除了未使用的 langLoading 状态
-  // fetchWeather 函数已被内联到 useEffect 中
+  const fetchWeather = async () => {
+    const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (data.code === 200) {
+      return data.data;
+    } else {
+      throw new Error(data.msg || '获取天气数据失败');
+    }
+  };
 
   const translateText = async () => {
     if (!sourceText.trim()) {
@@ -107,29 +118,12 @@ export default function WeatherWidget() {
   }
 
   useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/weather?city=北京`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.code === 200) {
-          return data.data;
-        } else {
-          throw new Error(data.msg || '获取天气数据失败');
-        }
-      } catch (err) {
-        throw err;
-      }
-    };
-
     const fetchData = async () => {
       setLoading(true);
       try {
         // 使用 Promise.all 并行执行两个异步操作
         const [weatherData, supportedLanguages] = await Promise.all([
-          fetchWeatherData(),
+          fetchWeather(),
           getSupportedLanguages()
         ]);
         setWeather(weatherData);
@@ -157,11 +151,22 @@ export default function WeatherWidget() {
           </div>
         )}
         
-        {weatherError && (
-          <div className="widget-error">
-            <p>❌ {weatherError}</p>
-            <button onClick={fetchWeather}>重试</button>
-          </div>
+        {weatherError && (
+          <div className="widget-error">
+            <p>❌ {weatherError}</p>
+            <button onClick={async () => {
+              setLoading(true);
+              setWeatherError(null);
+              try {
+                const weatherData = await fetchWeather();
+                setWeather(weatherData);
+              } catch (error) {
+                setWeatherError(error instanceof Error ? error.message : '未知错误');
+              } finally {
+                setLoading(false);
+              }
+            }}>重试</button>
+          </div>
         )}
         
         {weather && !loading && (
