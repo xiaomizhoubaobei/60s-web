@@ -1,0 +1,595 @@
+/* Weather Widget 组件样式 */
+.weather-widget {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2.5rem;
+}
+
+.widget-section {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.widget-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+}
+
+.widget-section:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: var(--shadow-xl);
+  border-color: transparent;
+}
+
+.widget-section:hover::before {
+  opacity: 0.03;
+}
+
+.widget-section h2 {
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.widget-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+}
+
+/* 加载状态 */
+.widget-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  margin: 1rem 0;
+}
+
+.small-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: modernSpin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.small-spinner::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid transparent;
+  border-top: 2px solid #4ECDC4;
+  border-radius: 50%;
+  animation: modernSpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse;
+}
+
+@keyframes modernSpin {
+  0% { 
+    transform: rotate(0deg);
+    border-top-color: #FF6B6B;
+  }
+  25% { 
+    border-top-color: #4ECDC4;
+  }
+  50% { 
+    border-top-color: #45B7D1;
+  }
+  75% { 
+    border-top-color: #667eea;
+  }
+  100% { 
+    transform: rotate(360deg);
+    border-top-color: #FF6B6B;
+  }
+}
+
+/* 错误状态 */
+.widget-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #ef4444;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.widget-error button {
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.widget-error button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 天气信息样式 */
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.weather-main {
+  text-align: center;
+  padding: 2.5rem;
+  background: var(--primary-gradient);
+  border-radius: 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.weather-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="weather-grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.2"/><circle cx="80" cy="80" r="1" fill="white" opacity="0.2"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23weather-grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.weather-main h3 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.temperature {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  animation: tempPulse 3s ease-in-out infinite;
+}
+
+@keyframes tempPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.weather-desc {
+  font-size: 1.3rem;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.weather-details {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  border-left: 4px solid #4ECDC4;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-item:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+  border-left-color: #FF6B6B;
+}
+
+.detail-item .label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.detail-item .value {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+/* 翻译表单样式 */
+.translation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group label::before {
+  content: '▸';
+  color: #4ECDC4;
+  font-weight: 700;
+}
+
+.form-group textarea,
+.form-group select {
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4ECDC4;
+  box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.1);
+  transform: translateY(-2px);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+.translate-btn {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  align-self: flex-start;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.translate-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.translate-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.translate-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+
+.translate-btn:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.translate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 翻译结果样式 */
+.translation-result {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-item {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.result-item:last-child {
+  margin-bottom: 0;
+}
+
+.result-item h4 {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.result-item h4::before {
+  content: '📝';
+  font-size: 1.2rem;
+}
+
+.result-item:last-child h4::before {
+  content: '🌐';
+}
+
+.result-item p {
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 1.1rem;
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-item p::before {
+  content: '"';
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-size: 3rem;
+  color: #4ECDC4;
+  opacity: 0.2;
+  font-family: Georgia, serif;
+}
+
+.result-item p::after {
+  content: '"';
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  font-size: 3rem;
+  color: #FF6B6B;
+  opacity: 0.2;
+  font-family: Georgia, serif;
+}
+
+.result-item p:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .weather-widget {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1rem;
+  }
+  
+  .widget-section {
+    padding: 2rem;
+  }
+  
+  .widget-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .temperature {
+    font-size: 3rem;
+  }
+  
+  .weather-main {
+    padding: 2rem;
+  }
+  
+  .weather-main h3 {
+    font-size: 1.8rem;
+  }
+  
+  .weather-desc {
+    font-size: 1.1rem;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .detail-item .value {
+    font-weight: 700;
+    color: #4ECDC4;
+    font-size: 1rem;
+  }
+  
+  .translation-form {
+    gap: 1.5rem;
+  }
+  
+  .form-group textarea {
+    min-height: 100px;
+  }
+  
+  .translate-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .translation-result {
+    padding: 1.5rem;
+  }
+  
+  .result-item {
+    margin-bottom: 1.5rem;
+  }
+  
+  .result-item h4 {
+    font-size: 1rem;
+  }
+  
+  .result-item p {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-widget {
+    padding: 0.75rem;
+    gap: 1.5rem;
+  }
+  
+  .widget-section {
+    padding: 1.5rem;
+  }
+  
+  .widget-section h2 {
+    font-size: 1.3rem;
+  }
+  
+  .temperature {
+    font-size: 2.5rem;
+  }
+  
+  .weather-main {
+    padding: 1.5rem;
+  }
+  
+  .weather-main h3 {
+    font-size: 1.5rem;
+  }
+  
+  .weather-desc {
+    font-size: 1rem;
+  }
+  
+  .detail-item {
+    padding: 0.875rem;
+  }
+  
+  .form-group textarea {
+    min-height: 90px;
+    padding: 0.875rem 1rem;
+  }
+  
+  .form-group select {
+    padding: 0.875rem 1rem;
+  }
+  
+  .translate-btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .translation-result {
+    padding: 1rem;
+  }
+  
+  .result-item {
+    margin-bottom: 1rem;
+  }
+  
+  .result-item h4 {
+    font-size: 0.95rem;
+  }
+  
+  .result-item p {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .result-item p::before,
+  .result-item p::after {
+    font-size: 2rem;
+  }
+}
