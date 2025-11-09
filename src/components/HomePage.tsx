@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import './HomePage.css'
+import { useState } from 'react'
+
+import './HomePage.css'
+
 import { API_BASE_URL } from '@/lib/api'
 
 interface Category {
@@ -21,45 +23,84 @@ interface HomePageProps {
 
 export default function HomePage({ onNavigate, isDarkMode, toggleTheme }: HomePageProps) {
   const [categories] = useState<Category[]>([
-    { 
-      id: '60s', 
-      name: '每日60秒', 
-      desc: '每天60秒读懂世界',
-      icon: '📰',
-      color: '#FF6B6B',
-      endpoint: `${API_BASE_URL}/60s`
-    },
-    { 
-      id: 'weibo', 
-      name: '微博热搜', 
-      desc: '实时微博热门话题',
-      icon: '🔥',
-      color: '#FF9500',
-      endpoint: `${API_BASE_URL}/weibo`
-    },
-    { 
-      id: 'zhihu', 
-      name: '知乎热榜', 
-      desc: '知乎热门问题',
-      icon: '💡',
-      color: '#007AFF',
-      endpoint: `${API_BASE_URL}/zhihu`
-    },
-    { 
-      id: 'baidu', 
-      name: '百度热搜', 
-      desc: '百度实时热点',
-      icon: '🔍',
-      color: '#4ECDC4',
-      endpoint: `${API_BASE_URL}/baidu`
-    },
-    { 
-      id: 'douyin', 
-      name: '抖音热点', 
-      desc: '抖音热门视频',
-      icon: '🎵',
-      color: '#FE2C55',
-      endpoint: `${API_BASE_URL}/douyin`
+    { 
+
+      id: '60s', 
+
+      name: '每日60秒', 
+
+      desc: '每天60秒读懂世界',
+
+      icon: '📰',
+
+      color: '#FF6B6B',
+
+      endpoint: `${API_BASE_URL}/60s`
+
+    },
+
+    { 
+
+      id: 'weibo', 
+
+      name: '微博热搜', 
+
+      desc: '实时微博热门话题',
+
+      icon: '🔥',
+
+      color: '#FF9500',
+
+      endpoint: `${API_BASE_URL}/weibo`
+
+    },
+
+    { 
+
+      id: 'zhihu', 
+
+      name: '知乎热榜', 
+
+      desc: '知乎热门问题',
+
+      icon: '💡',
+
+      color: '#007AFF',
+
+      endpoint: `${API_BASE_URL}/zhihu`
+
+    },
+
+    { 
+
+      id: 'baidu', 
+
+      name: '百度热搜', 
+
+      desc: '百度实时热点',
+
+      icon: '🔍',
+
+      color: '#4ECDC4',
+
+      endpoint: `${API_BASE_URL}/baidu`
+
+    },
+
+    { 
+
+      id: 'douyin', 
+
+      name: '抖音热点', 
+
+      desc: '抖音热门视频',
+
+      icon: '🎵',
+
+      color: '#FE2C55',
+
+      endpoint: `${API_BASE_URL}/douyin`
+
     }
   ])
 

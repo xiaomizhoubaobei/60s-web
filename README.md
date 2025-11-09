@@ -80,9 +80,8 @@ Docker 镜像已自动构建并推送至 GitHub Container Registry，支持多�
 项目支持通过环境变量自定义 API 地址。如果需要使用自己的 API 服务，请按以下步骤配置：
 
 1. 在项目根目录创建 `.env` 文件
-2. 
 2. 添加以下内容：
-3. 
+
    ```env
    VITE_API_BASE_URL=https://your-api-domain.com/v2
    ```
