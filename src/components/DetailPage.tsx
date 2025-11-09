@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import './DetailPage.css'
+import { useState, useEffect } from 'react'
+import './DetailPage.css'
+import { API_BASE_URL, getSupportedLanguages } from '@/lib/api'
 
 interface NewsItem {
   title: string
@@ -49,22 +50,22 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
       
       switch(categoryId) {
         case '60s':
-          apiUrl = '/api/60s'
+          apiUrl = `${API_BASE_URL}/60s`
           break
         case 'weibo':
-          apiUrl = '/api/weibo'
+          apiUrl = `${API_BASE_URL}/weibo`
           break
         case 'zhihu':
-          apiUrl = '/api/zhihu'
+          apiUrl = `${API_BASE_URL}/zhihu`
           break
         case 'baidu':
-          apiUrl = '/api/baidu'
+          apiUrl = `${API_BASE_URL}/baidu`
           break
         case 'douyin':
-          apiUrl = '/api/douyin'
+          apiUrl = `${API_BASE_URL}/douyin`
           break
         case 'weather':
-          apiUrl = '/api/weather?city=北京'
+          apiUrl = `${API_BASE_URL}/weather?city=北京`
           break
         case 'translate':
           // 翻译API需要参数，这里先不调用
@@ -72,7 +73,7 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
           setLoading(false)
           return
         default:
-          apiUrl = '/api/60s'
+          apiUrl = `${API_BASE_URL}/60s`
       }
 
       console.log('正在请求:', apiUrl)
@@ -110,20 +111,37 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
     }
   }
 
-  useEffect(() => {
-    if (categoryId !== 'translate') {
-      fetchData()
-    }
-  }, [categoryId])
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return ''
-    const date = new Date(dateString)
-    return date.toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+  useEffect(() => {
+    if (categoryId !== 'translate') {
+      fetchData()
+    }
+  }, [categoryId])
+
+  useEffect(() => {
+    const loadLanguages = async () => {
+      try {
+        const supportedLanguages = await getSupportedLanguages()
+        setLanguages(supportedLanguages)
+        setLangLoading(false)
+      } catch (error) {
+        console.error('加载语言列表失败:', error)
+        setLangLoading(false)
+      }
+    }
+
+    if (categoryId === 'translate') {
+      loadLanguages()
+    }
+  }, [categoryId])
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    return date.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
   }
 
   const handleLinkClick = (url: string, event: React.MouseEvent) => {
@@ -241,54 +259,61 @@ export default function DetailPage({ categoryId, onBack, isDarkMode, toggleTheme
     </div>
   )
 
-  // Translation state (moved outside renderTranslateSection)
-  const [sourceText, setSourceText] = useState('')
-  const [translation, setTranslation] = useState<any>(null)
-  const [translating, setTranslating] = useState(false)
-  const [translationError, setTranslationError] = useState<string | null>(null)
-  const [targetLang, setTargetLang] = useState('en')
+  // Translation state (moved outside renderTranslateSection)
+  const [sourceText, setSourceText] = useState('')
+  const [translation, setTranslation] = useState<any>(null)
+  const [translating, setTranslating] = useState(false)
+  const [translationError, setTranslationError] = useState<string | null>(null)
+  const [targetLang, setTargetLang] = useState('en')
+  const [languages, setLanguages] = useState<{ code: string; name: string }[]>([
+    { code: 'en', name: '英语' },
+    { code: 'ja', name: '日语' },
+    { code: 'ko', name: '韩语' },
+    { code: 'fr', name: '法语' },
+    { code: 'de', name: '德语' },
+    { code: 'es', name: '西班牙语' },
+    { code: 'ru', name: '俄语' }
+  ])
+  const [langLoading, setLangLoading] = useState(true)
 
-  const languages = [
-    { code: 'en', name: '英语' },
-    { code: 'ja', name: '日语' },
-    { code: 'ko', name: '韩语' },
-    { code: 'fr', name: '法语' },
-    { code: 'de', name: '德语' },
-    { code: 'es', name: '西班牙语' },
-    { code: 'ru', name: '俄语' }
-  ]
-
-  const translateText = async () => {
-    if (!sourceText.trim()) {
-      setTranslationError('请输入要翻译的文本')
-      return
-    }
-
-    setTranslating(true)
-    setTranslationError(null)
-    
-    try {
-      const response = await fetch(
-        `/api/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
-      )
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.code === 200) {
-        setTranslation(data.data)
-      } else {
-        throw new Error(data.msg || '翻译失败')
-      }
-    } catch (err) {
-      setTranslationError(err instanceof Error ? err.message : '未知错误')
-      setTranslation(null)
-    } finally {
-      setTranslating(false)
-    }
+  const translateText = async () => {
+    if (!sourceText.trim()) {
+      setTranslationError('请输入要翻译的文本')
+      return
+    }
+
+    // 验证目标语言参数
+    const validTargetLangs = languages.map(lang => lang.code)
+    if (!validTargetLangs.includes(targetLang)) {
+      setTranslationError('不支持的目标语言')
+      return
+    }
+
+    setTranslating(true)
+    setTranslationError(null)
+    
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
+      )
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      
+      if (data.code === 200) {
+        setTranslation(data.data)
+      } else {
+        throw new Error(data.msg || '翻译失败')
+      }
+    } catch (err) {
+      setTranslationError(err instanceof Error ? err.message : '未知错误')
+      setTranslation(null)
+    } finally {
+      setTranslating(false)
+    }
   }
 
   const renderTranslateSection = () => {

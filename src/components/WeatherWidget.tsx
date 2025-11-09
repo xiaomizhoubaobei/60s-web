@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import './WeatherWidget.css'
+import { useState, useEffect } from 'react'
+import './WeatherWidget.css'
+import { API_BASE_URL, getSupportedLanguages } from '@/lib/api'
 
 interface WeatherData {
   location: {
@@ -60,8 +61,7 @@ export default function WeatherWidget() {
   const [translating, setTranslating] = useState(false)
   const [translationError, setTranslationError] = useState<string | null>(null)
   const [targetLang, setTargetLang] = useState('en')
-
-  const languages = [
+  const [languages, setLanguages] = useState<{ code: string; name: string }[]>([
     { code: 'en', name: '英语' },
     { code: 'ja', name: '日语' },
     { code: 'ko', name: '韩语' },
@@ -69,14 +69,15 @@ export default function WeatherWidget() {
     { code: 'de', name: '德语' },
     { code: 'es', name: '西班牙语' },
     { code: 'ru', name: '俄语' }
-  ]
+  ])
+  const [langLoading, setLangLoading] = useState(true)
 
   const fetchWeather = async () => {
     setLoading(true)
     setWeatherError(null)
     
     try {
-      const response = await fetch('/api/weather?city=北京')
+      const response = await fetch(`${API_BASE_URL}/weather?city=北京`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -102,12 +103,19 @@ export default function WeatherWidget() {
       return
     }
 
+    // 验证目标语言参数
+    const validTargetLangs = languages.map(lang => lang.code)
+    if (!validTargetLangs.includes(targetLang)) {
+      setTranslationError('不支持的目标语言')
+      return
+    }
+
     setTranslating(true)
     setTranslationError(null)
     
     try {
       const response = await fetch(
-        `/api/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
+        `${API_BASE_URL}/translate?text=${encodeURIComponent(sourceText)}&to=${targetLang}`
       )
       
       if (!response.ok) {
@@ -129,11 +137,26 @@ export default function WeatherWidget() {
     }
   }
 
-  useEffect(() => {
-    fetchWeather()
-  }, [])
-
-  return (
+  useEffect(() => {
+    fetchWeather()
+  }, [])
+
+  useEffect(() => {
+    const loadLanguages = async () => {
+      try {
+        const supportedLanguages = await getSupportedLanguages()
+        setLanguages(supportedLanguages)
+        setLangLoading(false)
+      } catch (error) {
+        console.error('加载语言列表失败:', error)
+        setLangLoading(false)
+      }
+    }
+
+    loadLanguages()
+  }, [])
+
+  return (
     <div className="weather-widget">
       {/* 天气信息卡片 */}
       <section className="widget-section">
