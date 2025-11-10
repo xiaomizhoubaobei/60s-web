@@ -3,14 +3,14 @@
 #-----------------------------------------
 FROM node:lts AS builder
 
-# 启用 corepack 使用系统自带的 yarn（体积最小）
-RUN corepack enable && corepack prepare yarn@stable --activate
+RUN curl -fsSL https://classic.yarnpkg.com/install.sh | bash
+ENV PATH="/root/.yarn/bin:$PATH"
 
 WORKDIR /app
 
 # 先复制依赖描述文件，充分利用缓存
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --production=false
 
 # 再复制源码并构建
 COPY . .
