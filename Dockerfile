@@ -10,7 +10,7 @@ WORKDIR /app
 
 # 先复制依赖描述文件，充分利用缓存
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production=false
+RUN yarn install --frozen-lockfile
 
 # 再复制源码并构建
 COPY . .
