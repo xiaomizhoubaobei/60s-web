@@ -1,4 +1,9 @@
 # 60s-web
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0%2B-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18.x%20%7C%2020.x%20%7C%2022.x-brightgreen.svg)](https://nodejs.org/)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Open Source Love png1](https://raw.githubusercontent.com/ellerbrock/open-source-badges/master/badges/open-source-v1/open-source.png)](https://github.com/ellerbrock/open-source-badges/)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/xiaomizhoubaobei/60s-web/badge)](https://scorecard.dev/viewer/?uri=github.com/xiaomizhoubaobei/60s-web)
 
 一个现代化的 React 应用，用于展示和访问各类信息 API 服务，包括每日 60 秒、微博热搜、知乎热榜、百度热搜、抖音热点、天气信息、在线翻译等。
 

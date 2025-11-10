@@ -1,29 +1,1 @@
-FROM node:lts
-
-WORKDIR /app
-
-# 安装 yarn
-RUN curl -fsSL https://classic.yarnpkg.com/install.sh | bash
-ENV PATH="/root/.yarn/bin:$PATH"
-
-
-# 安装项目依赖
-COPY package.json package.json
-COPY yarn.lock yarn.lock
-RUN yarn install && yarn cache clean
-
-# 安装字体 & fontconfig 工具
-RUN apt-get update && \
-    apt-get install -y curl wget
-
-# 复制源代码
-COPY . .
-
-# 构建项目
-RUN yarn run build
-
-# 暴露端口5173
-EXPOSE 5173
-
-# 启动应用
-CMD ["yarn", "preview"]
+#-----------------------------------------# 1. 依赖 & 构建阶段#-----------------------------------------FROM node:lts AS builder# 启用 corepack 使用系统自带的 yarn（体积最小）RUN corepack enable && corepack prepare yarn@stable --activateWORKDIR /app# 先复制依赖描述文件，充分利用缓存COPY package.json yarn.lock ./RUN yarn install --frozen-lockfile --production=false# 再复制源码并构建COPY . .RUN yarn build#-----------------------------------------# 2. 运行阶段（Express 服务器）#-----------------------------------------FROM node:ltsWORKDIR /app# 复制构建产物、依赖列表、服务器入口COPY --from=builder /app/dist ./distCOPY --from=builder /app/package.json ./COPY --from=builder /app/app.js ./# 仅安装生产依赖，并清理缓存RUN corepack enable && \    yarn install --frozen-lockfile --production=true && \    yarn cache clean --all# 创建非 root 用户（Debian 语法）RUN groupadd -r nodejs && \    useradd -r -u 1001 -g nodejs -d /app -s /bin/false vite && \    chown -R vite:nodejs /appUSER viteEXPOSE 5173CMD ["node", "app.js"]
