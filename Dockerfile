@@ -1,1 +1,43 @@
-#-----------------------------------------# 1. 依赖 & 构建阶段#-----------------------------------------FROM node:lts AS builder# 启用 corepack 使用系统自带的 yarn（体积最小）RUN corepack enable && corepack prepare yarn@stable --activateWORKDIR /app# 先复制依赖描述文件，充分利用缓存COPY package.json yarn.lock ./RUN yarn install --frozen-lockfile --production=false# 再复制源码并构建COPY . .RUN yarn build#-----------------------------------------# 2. 运行阶段（Express 服务器）#-----------------------------------------FROM node:ltsWORKDIR /app# 复制构建产物、依赖列表、服务器入口COPY --from=builder /app/dist ./distCOPY --from=builder /app/package.json ./COPY --from=builder /app/app.js ./# 仅安装生产依赖，并清理缓存RUN corepack enable && \    yarn install --frozen-lockfile --production=true && \    yarn cache clean --all# 创建非 root 用户（Debian 语法）RUN groupadd -r nodejs && \    useradd -r -u 1001 -g nodejs -d /app -s /bin/false vite && \    chown -R vite:nodejs /appUSER viteEXPOSE 5173CMD ["node", "app.js"]
+#-----------------------------------------
+# 1. 依赖 & 构建阶段
+#-----------------------------------------
+FROM node:lts AS builder
+
+# 启用 corepack 使用系统自带的 yarn（体积最小）
+RUN corepack enable && corepack prepare yarn@stable --activate
+
+WORKDIR /app
+
+# 先复制依赖描述文件，充分利用缓存
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production=false
+
+# 再复制源码并构建
+COPY . .
+RUN yarn build
+
+#-----------------------------------------
+# 2. 运行阶段（仅产物 + serve）
+#-----------------------------------------
+FROM node:lts
+
+# 安装一个极简静态服务器
+RUN corepack enable && \
+    yarn global add serve --silent && \
+    yarn cache clean --all
+
+WORKDIR /app
+
+# 复制构建产物
+COPY --from=builder /app/dist ./dist
+
+# 创建非 root 用户（Debian 语法）
+RUN groupadd -r nodejs && \
+    useradd -r -u 1001 -g nodejs -d /app -s /bin/false vite && \
+    chown -R vite:nodejs /app
+
+USER vite
+
+# serve 默认监听 0.0.0.0，无需额外配置
+EXPOSE 5173
+CMD ["serve", "-s", "dist", "-l", "5173"]
