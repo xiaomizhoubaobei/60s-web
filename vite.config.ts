@@ -11,6 +11,13 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
-    port: 5173
+    port: 5173,
+    // proxy: {
+    //   '/v2': {
+    //     target: 'https://60s.mizhoubaobei.top',
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/v2/, ''),
+    //   }
+    // }
   }
 })

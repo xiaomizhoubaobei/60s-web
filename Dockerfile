@@ -1,29 +1,34 @@
-FROM node:lts
-
+# 1. 构建阶段
+FROM node:lts AS builder
 WORKDIR /app
 
-# 安装 yarn
-RUN curl -fsSL https://classic.yarnpkg.com/install.sh | bash
-ENV PATH="/root/.yarn/bin:$PATH"
+# 使用系统自带的 yarn（体积最小）
+RUN corepack enable && corepack prepare yarn@stable --activate
 
+# 先复制依赖描述文件，充分利用缓存
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production=false
 
-# 安装项目依赖
-COPY package.json package.json
-COPY yarn.lock yarn.lock
-RUN yarn install && yarn cache clean
-
-# 安装字体 & fontconfig 工具
-RUN apt-get update && \
-    apt-get install -y curl wget
-
-# 复制源代码
+# 再复制其余源码
 COPY . .
+RUN yarn build
 
-# 构建项目
-RUN yarn run build
+# 2. 运行阶段
+FROM node:lts
+WORKDIR /app
 
-# 暴露端口5173
+# 仅安装一个静态服务器
+RUN yarn global add serve --silent
+
+# 把构建产物拷进来
+COPY --from=builder /app/dist ./dist
+
+# 非 root 运行（可选但强烈建议）
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S vite -u 1001 -G nodejs && \
+    chown -R vite:nodejs /app
+USER vite
+
 EXPOSE 5173
-
-# 启动应用
-CMD ["yarn", "preview"]
+# serve 默认就是 0.0.0.0，无需额外配置
+CMD ["serve", "-s", "dist", "-l", "5173"]
