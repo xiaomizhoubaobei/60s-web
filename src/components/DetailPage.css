@@ -5,8 +5,8 @@
   position: relative;
 }
 
-/* 主题切换按钮 */
-.detail-page .theme-toggle {
+/* 主题切换按钮 - 使用共享样式减少重复 */
+.theme-toggle {
   position: fixed;
   top: 2rem;
   right: 2rem;
@@ -22,17 +22,17 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s var(--transition-cubic);
   box-shadow: var(--shadow-lg);
   font-size: 1.5rem;
 }
 
-.detail-page .theme-toggle:hover {
+.theme-toggle:hover {
   transform: scale(1.1) rotate(15deg);
   box-shadow: var(--shadow-xl);
 }
 
-.detail-page .theme-toggle:active {
+.theme-toggle:active {
   transform: scale(0.95);
 }
 
@@ -818,6 +818,72 @@
   50% { transform: translateY(-10px); }
 }
 
+/* 页脚样式 - 从HomePage.css复制并优化 */
+.homepage-footer {
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-top: 2rem;
+}
+
+.homepage-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+}
+
+.homepage-footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.homepage-footer p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.homepage-footer a {
+  color: #4ECDC4;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.homepage-footer a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+  transition: width 0.3s ease;
+}
+
+.homepage-footer a:hover::after {
+  width: 100%;
+}
+
+.homepage-footer a:hover {
+  color: #FF6B6B;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .detail-header {
@@ -909,6 +975,11 @@
   .result-item p {
     padding: 1rem;
     font-size: 1rem;
+  }
+  
+  .homepage-footer-content {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 }
 
@@ -1003,5 +1074,10 @@
   .result-item p::before,
   .result-item p::after {
     font-size: 2rem;
+  }
+  
+  .homepage-footer-content {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }

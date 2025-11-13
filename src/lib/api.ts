@@ -22,6 +22,17 @@ const getApiBaseUrl = () => {
   return baseUrl.replace(/\/$/, '')
 };
 
+// 添加防抖函数优化API请求
+export const debounce = <T extends (...args: any[]) => any>(func: T, wait: number) => {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>): Promise<ReturnType<T>> => {
+    return new Promise((resolve) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => resolve(func(...args)), wait);
+    });
+  };
+};
+
 export const API_BASE_URL = getApiBaseUrl();
 
 // 获取支持的翻译语言列表
@@ -47,4 +58,17 @@ export const getSupportedLanguages = async () => {
     // 如果API调用失败，返回默认语言列表
     return fanyi();
   }
+};
+
+// 图片代理函数，用于解决防盗链问题
+export const getProxiedImageUrl = (url: string): string => {
+  if (!url) return '';
+  
+  // 检查是否是微信图片链接
+  if (url.includes('mmbiz.qpic.cn') || url.includes('wx_fmt=jpeg')) {
+    // 使用图片代理服务来绕过防盗链
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url.replace('http://', '').replace('https://', ''))}&w=800&q=85`;
+  }
+  
+  return url;
 };

@@ -9,36 +9,8 @@
                     radial-gradient(circle at 50% 50%, rgba(78, 205, 196, 0.05) 0%, transparent 30%);
 }
 
-/* 主题切换按钮 */
-.homepage .theme-toggle {
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  z-index: 1000;
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 2px solid var(--border-color);
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-lg);
-  font-size: 1.5rem;
-}
-
-.homepage .theme-toggle:hover {
-  transform: scale(1.1) rotate(15deg);
-  box-shadow: var(--shadow-xl);
-}
-
-.homepage .theme-toggle:active {
-  transform: scale(0.95);
-}
+/* 主题切换按钮已在App.css中定义，这里移除重复代码 */
+/* 其他组件中的主题切换按钮将继承共享样式 */
 
 /* 头部样式 */
 .homepage-header {
@@ -228,8 +200,18 @@
   background: var(--primary-gradient);
 }
 
+.homepage-footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
 .homepage-footer p {
-  margin-bottom: 0.75rem;
+  margin: 0;
   opacity: 0.8;
   font-size: 0.95rem;
   color: var(--text-secondary);
@@ -319,11 +301,16 @@
   .category-item h3 {
     font-size: 1.3rem;
   }
+  
+  .homepage-footer-content {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 }
 
 @media (max-width: 480px) {
   .homepage-header {
-    padding: 2rem 1rem 1.5rem;
+    padding: 2rem 1rem;
   }
   
   .homepage-main {
@@ -349,5 +336,10 @@
     font-size: 1.2rem;
     top: 1rem;
     right: 1rem;
+  }
+  
+  .homepage-footer-content {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }

@@ -45,6 +45,19 @@
     --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
+/* 全局动画优化 */
+:root {
+    --animation-duration: 0.3s;
+    --transition-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 优化的动画属性 */
+@media (prefers-reduced-motion: no-preference) {
+    * {
+        animation-duration: var(--animation-duration);
+    }
+}
+
 html {
     scroll-behavior: smooth;
 }
