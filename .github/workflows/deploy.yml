@@ -14,6 +14,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             # 1. 拉代码
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+              with:
+                  egress-policy: audit
             - name: Checkout
               uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
             # 2. 装 Node + 缓存 yarn
@@ -30,7 +34,7 @@ jobs:
               run: yarn build   # 产物默认输出到 dist/
             # 5. 部署到阿里云 OSS
             -   name: upload files to OSS
-                uses: fangbinwei/aliyun-oss-website-action@v1
+                uses: fangbinwei/aliyun-oss-website-action@b9cc5868757aa0d42d30cd9a0df8da5169d66ff2 # v1.4.0
                 with:
                     accessKeyId: ${{ secrets.OSS_KEY_ID }}
                     accessKeySecret: ${{ secrets.OSS_KEY_SECRET }}
