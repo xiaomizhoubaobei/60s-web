@@ -16,9 +16,10 @@
   padding: 2.5rem;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s var(--transition-cubic);
   position: relative;
   overflow: hidden;
+  contain: layout style paint;
 }
 
 .widget-section::before {
@@ -30,7 +31,7 @@
   bottom: 0;
   background: var(--primary-gradient);
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
   z-index: -1;
 }
 

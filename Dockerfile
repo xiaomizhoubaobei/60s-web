@@ -1,43 +1,30 @@
-#-----------------------------------------
-# 1. 依赖 & 构建阶段
-#-----------------------------------------
-FROM node:lts AS builder
-
-RUN curl -fsSL https://classic.yarnpkg.com/install.sh | bash
-ENV PATH="/root/.yarn/bin:$PATH"
-
+#---- 构建阶段 ----
+FROM node:lts-alpine AS builder
 WORKDIR /app
+RUN apk add --no-cache yarn
 
-# 先复制依赖描述文件，充分利用缓存
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production=false
 
-# 再复制源码并构建
 COPY . .
-RUN yarn build
+RUN yarn build && yarn cache clean
 
-#-----------------------------------------
-# 2. 运行阶段（仅产物 + serve）
-#-----------------------------------------
-FROM node:lts
+#---- 运行阶段 ----
+FROM nginx:alpine
+# 创建非 root 用户
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S -u 1001 -G nodejs vite
 
-# 安装一个极简静态服务器
-RUN corepack enable && \
-    yarn global add serve --silent && \
-    yarn cache clean --all
+# 拷贝产物与配置
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY default.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /app
-
-# 复制构建产物
-COPY --from=builder /app/dist ./dist
-
-# 创建非 root 用户（Debian 语法）
-RUN groupadd -r nodejs && \
-    useradd -r -u 1001 -g nodejs -d /app -s /bin/false vite && \
-    chown -R vite:nodejs /app
-
+# 降权：让 nginx 以 vite 身份跑
+RUN chown -R vite:nodejs /usr/share/nginx/html && \
+    chown -R vite:nodejs /var/cache/nginx && \
+    chown -R vite:nodejs /var/log/nginx && \
+    chown -R vite:nodejs /etc/nginx/conf.d
 USER vite
 
-# serve 默认监听 0.0.0.0，无需额外配置
-EXPOSE 5173
-CMD ["serve", "-s", "dist", "-l", "5173"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

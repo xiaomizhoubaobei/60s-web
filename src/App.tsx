@@ -62,6 +62,22 @@ function App() {
     }
   }
 
+  // 将categoryNames移到组件外部或使用useMemo缓存
+  const categoryNames = {
+    '60s': '每日60秒',
+    'weibo': '微博热搜',
+    'zhihu': '知乎热榜',
+    'baidu': '百度热搜',
+    'douyin': '抖音热点',
+    'weather': '天气信息',
+    'translate': '在线翻译'
+  } as const;
+
+  // 类型守卫函数，确保categoryId是categoryNames的有效键
+  const isValidCategory = (categoryId: string): categoryId is keyof typeof categoryNames => {
+    return categoryId in categoryNames;
+  };
+
   const handleNavigate = (page: PageType, categoryId?: string) => {
     setCurrentPage(page)
     setSelectedCategoryId(categoryId || '')
@@ -72,16 +88,11 @@ function App() {
       document.title = '60s API- 探索高质量API服务'
     } else {
       window.history.pushState({}, '', `/${categoryId}`)
-      const categoryNames: Record<string, string> = {
-        '60s': '每日60秒',
-        'weibo': '微博热搜',
-        'zhihu': '知乎热榜',
-        'baidu': '百度热搜',
-        'douyin': '抖音热点',
-        'weather': '天气信息',
-        'translate': '在线翻译'
-      }
-      document.title = `${categoryNames[categoryId || '']} - 60s API`
+      // 使用类型守卫确保categoryId是有效键
+      const categoryName = categoryId && isValidCategory(categoryId) 
+        ? categoryNames[categoryId] 
+        : categoryId || '';
+      document.title = `${categoryName} - 60s API`
     }
   }
 
