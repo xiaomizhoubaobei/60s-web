@@ -1,5 +1,5 @@
 #---- 构建阶段 ----
-FROM node:lts-alpine AS builder
+FROM node:lts-alpine@sha256:10d711afd59d7025ccc97fc4f1f78be8588a5f025d3a8b179af64f6720f5d99b AS builder
 WORKDIR /app
 RUN apk add --no-cache yarn
 
@@ -10,7 +10,7 @@ COPY . .
 RUN yarn build && yarn cache clean
 
 #---- 运行阶段 ----
-FROM nginx:alpine
+FROM nginx:alpine@sha256:b3c656d55d7ad751196f21b7fd2e8d4da9cb430e32f646adcf92441b72f82b14
 # 创建非 root 用户
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S -u 1001 -G nodejs vite
