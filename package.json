@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc -b && vite build && node scripts/clean-dist.js",
+    "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "serve": "npm run build && npm run preview",
     "type-check": "tsc --noEmit"

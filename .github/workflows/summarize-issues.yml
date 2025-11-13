@@ -52,9 +52,9 @@ jobs:
 
             - name: 以AI总结内容评论
               run: |
-                  if ! gh issue comment $ISSUE_NUMBER --body '${{ steps.inference.outputs.response }}'; then
+                  if ! gh issue comment $ISSUE_NUMBER --body "$RESPONSE"; then
                     echo "Warning: Failed to add comment to issue #${{ github.event.issue.number }}" >> audit.log
-                    echo "AI response: ${{ steps.inference.outputs.response }}" >> audit.log
+                    eecho "AI response: $RESPONSE" >> audit.log
                     echo "Timestamp: $(date -u)" >> audit.log
                     # Continue with the workflow even if this step fails
                   fi

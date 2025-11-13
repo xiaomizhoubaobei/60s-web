@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
-import './DetailPage.css';
+import { useState, useEffect } from 'react';
+
+import './DetailPage.css';
+
 import { API_BASE_URL, getSupportedLanguages, getProxiedImageUrl } from '@/lib/api';
 
 interface NewsItem {
@@ -335,28 +337,25 @@ export default function DetailPage({
       setTranslating(false);
     }
   };
-
-  // 处理图片URL，解决防盗链问题
-  const processImageURL = (url: string): string => {
-    // 使用我们新创建的代理函数
-    return getProxiedImageUrl(url);
-  };
-
-  // 图片加载错误处理
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, originalSrc: string) => {
-    const target = e.target as HTMLImageElement;
-    
-    // 如果是微信图片，尝试使用代理服务
-    if (originalSrc && (originalSrc.includes('mmbiz.qpic.cn') || originalSrc.includes('wx_fmt=jpeg'))) {
-      const proxyUrl = getProxiedImageUrl(originalSrc);
-      if (target.src !== proxyUrl) {
-        target.src = proxyUrl;
-        return;
-      }
-    }
-    
-    // 如果代理服务也失败，显示默认图片或错误信息
-    target.alt = "图片加载失败";
+  // 处理图片URL，解决防盗链问题
+  const processImageURL = (url: string): string => {
+    // 使用我们新创建的代理函数
+    return  getProxiedImageUrl(url);
+  };
+  // 图片加载错误处理
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, originalSrc: string) => {
+    const target = e.target as HTMLImageElement;
+    // 检查是否已经重试过代理URL，防止无限循环
+    if (target.dataset.proxyRetried) {
+      // 如果已经重试过，显示默认图片或错误信息
+      target.alt = "图片加载失败";
+      return;
+    }
+    // 如果是微信图片，尝试使用代理服务
+    if (originalSrc && (originalSrc.includes('mmbiz.qpic.cn') || originalSrc.includes('wx_fmt=jpeg'))) {
+    }
+    // 如果代理服务也失败，显示默认图片或错误信息
+    target.alt = "图片加载失败";
   };
 
   const renderTranslateSection = () => {
@@ -503,46 +502,86 @@ export default function DetailPage({
           )}
         </main>
 
-        <footer className="homepage-footer">
-          <div className="homepage-footer-content">
-            <p>
-              数据来源：
-              <a
-                  href="https://github.com/vikiboss/60s"
-                  target="_blank"
-                  rel="noopener noreferrer"
-              >
-                60s API
-              </a>
-            </p>
-            <p>
-              <a
-                  href="https://github.com/xiaomizhoubaobei/60s-web"
-                  target="_blank"
-                  rel="noopener noreferrer"
-              >
-                项目源码
-              </a>
-            </p>
-            <p>
-              <a
-                  href="https://beian.miit.gov.cn/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-              >
-                渝ICP备2022010031号-8
-              </a>
-            </p>
-            <p>
-              <a
-                  href="https://icp.gov.moe/?keyword=20250975"
-                  target="_blank"
-                  rel="noopener noreferrer"
-              >
-                萌ICP备20250975号
-              </a>
-            </p>
-          </div>
+        <footer className="homepage-footer">
+
+          <div className="homepage-footer-content">
+
+            <p>
+
+              数据来源：
+
+              <a
+
+                  href="https://github.com/vikiboss/60s"
+
+                  target="_blank"
+
+                  rel="noopener noreferrer"
+
+              >
+
+                60s API
+
+              </a>
+
+            </p>
+
+            <p>
+
+              <a
+
+                  href="https://github.com/xiaomizhoubaobei/60s-web"
+
+                  target="_blank"
+
+                  rel="noopener noreferrer"
+
+              >
+
+                项目源码
+
+              </a>
+
+            </p>
+
+            <p>
+
+              <a
+
+                  href="https://beian.miit.gov.cn/"
+
+                  target="_blank"
+
+                  rel="noopener noreferrer"
+
+              >
+
+                渝ICP备2022010031号-8
+
+              </a>
+
+            </p>
+
+            <p>
+
+              <a
+
+                  href="https://icp.gov.moe/?keyword=20250975"
+
+                  target="_blank"
+
+                  rel="noopener noreferrer"
+
+              >
+
+                萌ICP备20250975号
+
+              </a>
+
+            </p>
+
+          </div>
+
         </footer>
       </div>
   );
