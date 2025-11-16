@@ -1,0 +1,286 @@
+.daily60s-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.daily60s-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FF6B6B, #FF8E53, #FF6B6B);
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.daily60s-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.daily60s-date-info {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.date-title {
+  margin: 0 0 8px 0;
+  font-size: 2.2rem;
+  color: #333;
+  font-weight: 700;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lunar-date {
+  margin: 0 0 8px 0;
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.api-update-time {
+  margin: 0;
+  color: #888;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.daily60s-image {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.daily60s-image:hover {
+  transform: translateY(-5px);
+}
+
+.daily60s-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.daily60s-image:hover img {
+  transform: scale(1.02);
+}
+
+.daily60s-tip {
+  background: linear-gradient(135deg, #e8f4fd 0%, #e3f2fd 100%);
+  border-left: 4px solid #2196f3;
+  padding: 18px 22px;
+  margin: 20px 0;
+  border-radius: 0 10px 10px 0;
+  font-style: italic;
+  box-shadow: 0 4px 10px rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.1);
+}
+
+.daily60s-tip p {
+  margin: 0;
+  color: #1a202c;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.daily60s-news-list h3 {
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #eee;
+  font-size: 1.4rem;
+  font-weight: 600;
+  position: relative;
+}
+
+.daily60s-news-list h3::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, #FF6B6B, #FF8E53);
+  border-radius: 2px;
+}
+
+.daily60s-news-list ol {
+  padding-left: 25px;
+  counter-reset: news-counter;
+  margin: 0;
+}
+
+.news-item {
+  margin-bottom: 18px;
+  line-height: 1.7;
+  display: flex;
+  padding: 12px 15px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.news-item:hover {
+  background: rgba(255, 107, 107, 0.05);
+  transform: translateX(5px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.news-number {
+  font-weight: 700;
+  margin-right: 12px;
+  color: #FF6B6B;
+  min-width: 28px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.news-text {
+  flex: 1;
+  color: #4a5568;
+  font-size: 1.05rem;
+}
+
+.daily60s-link {
+  text-align: center;
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid #eee;
+}
+
+.original-article-link {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.original-article-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: 0.5s;
+  z-index: -1;
+}
+
+.original-article-link:hover::before {
+  left: 100%;
+}
+
+.original-article-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+}
+
+.original-article-link:active {
+  transform: translateY(-1px);
+}
+
+/* 暗黑模式支持 */
+[data-theme="dark"] .daily60s-container {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .daily60s-header,
+[data-theme="dark"] .date-title,
+[data-theme="dark"] .lunar-date,
+[data-theme="dark"] .api-update-time {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .lunar-date,
+[data-theme="dark"] .api-update-time {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .daily60s-news-list h3 {
+  color: #e2e8f0;
+  border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .news-text {
+  color: #cbd5e0;
+}
+
+[data-theme="dark"] .daily60s-tip {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+  border-left-color: #63b3ed;
+  color: #e2e8f0;
+  border-color: rgba(99, 179, 237, 0.2);
+}
+
+[data-theme="dark"] .daily60s-news-list {
+  border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .original-article-link {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  color: #2d3748;
+}
+
+[data-theme="dark"] .news-item {
+  background: rgba(45, 55, 72, 0.7);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .news-item:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+[data-theme="dark"] .date-title {
+  -webkit-text-fill-color: initial;
+  color: #e2e8f0;
+  background: linear-gradient(135deg, #ff8a80 0%, #ffab91 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

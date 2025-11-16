@@ -1,0 +1,87 @@
+.baidu-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.baidu-page .detail-header {
+  background: linear-gradient(90deg, #4ECDC4 0%, #88d8d0 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+}
+
+.baidu-page .category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.baidu-page .news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.baidu-page .news-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-right: 4px solid #4ECDC4;
+}
+
+.baidu-page .news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.baidu-page .news-image {
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.baidu-page .news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.baidu-page .news-card:hover .news-image img {
+  transform: scale(1.05);
+}
+
+.baidu-page .news-content {
+  padding: 15px;
+}
+
+.baidu-page .news-title {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.baidu-page .news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.baidu-page .hot-badge {
+  background: #4ECDC4;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.baidu-page .date {
+  color: #888;
+}

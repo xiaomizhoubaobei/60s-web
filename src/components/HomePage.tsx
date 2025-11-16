@@ -1,8 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import './HomePage.css'
-
-import { API_BASE_URL } from '@/lib/api'
 
 interface Category {
   id: string
@@ -10,102 +9,65 @@ interface Category {
   desc: string
   icon: string
   color: string
-  endpoint: string
 }
 
-type PageType = 'home' | 'detail'
+export default function HomePage() {
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const navigate = useNavigate()
 
-interface HomePageProps {
-  onNavigate: (page: PageType, categoryId?: string) => void
-  isDarkMode: boolean
-  toggleTheme: () => void
-}
-
-export default function HomePage({ onNavigate, isDarkMode, toggleTheme }: HomePageProps) {
   const [categories] = useState<Category[]>([
     { 
-
       id: '60s', 
-
       name: '每日60秒', 
-
       desc: '每天60秒读懂世界',
-
       icon: '📰',
-
-      color: '#FF6B6B',
-
-      endpoint: `${API_BASE_URL}/60s`
-
+      color: '#FF6B6B'
     },
-
     { 
-
       id: 'weibo', 
-
       name: '微博热搜', 
-
       desc: '实时微博热门话题',
-
       icon: '🔥',
-
-      color: '#FF9500',
-
-      endpoint: `${API_BASE_URL}/weibo`
-
+      color: '#FF9500'
     },
-
     { 
-
       id: 'zhihu', 
-
       name: '知乎热榜', 
-
       desc: '知乎热门问题',
-
       icon: '💡',
-
-      color: '#007AFF',
-
-      endpoint: `${API_BASE_URL}/zhihu`
-
+      color: '#007AFF'
     },
-
     { 
-
       id: 'baidu', 
-
       name: '百度热搜', 
-
       desc: '百度实时热点',
-
       icon: '🔍',
-
-      color: '#4ECDC4',
-
-      endpoint: `${API_BASE_URL}/baidu`
-
+      color: '#4ECDC4'
     },
-
     { 
-
       id: 'douyin', 
-
       name: '抖音热点', 
-
       desc: '抖音热门视频',
-
       icon: '🎵',
-
-      color: '#FE2C55',
-
-      endpoint: `${API_BASE_URL}/douyin`
-
+      color: '#FE2C55'
     }
   ])
 
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode
+    setIsDarkMode(newTheme)
+    
+    if (newTheme) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
   const handleCategoryClick = (categoryId: string) => {
-    onNavigate('detail' as PageType, categoryId)
+    navigate(`/${categoryId}`)
   }
 
   return (

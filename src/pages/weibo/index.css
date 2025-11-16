@@ -1,0 +1,87 @@
+.weibo-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff 0%, #f0f2f5 100%);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.weibo-page .detail-header {
+  background: linear-gradient(90deg, #FF9500 0%, #FFB142 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
+}
+
+.weibo-page .category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.weibo-page .news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.weibo-page .news-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 4px solid #FF9500;
+}
+
+.weibo-page .news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.weibo-page .news-image {
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.weibo-page .news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.weibo-page .news-card:hover .news-image img {
+  transform: scale(1.05);
+}
+
+.weibo-page .news-content {
+  padding: 15px;
+}
+
+.weibo-page .news-title {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.weibo-page .news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.weibo-page .hot-badge {
+  background: #FF9500;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.weibo-page .date {
+  color: #888;
+}
