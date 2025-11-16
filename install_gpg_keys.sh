@@ -8,9 +8,9 @@ if ! command -v gpg &>/dev/null; then
     sudo apt-get install -y gnupg wget
 fi
 
-# 2. 密钥下载地址
-PRIVATE_KEY_URL="https://mzapi-help-1329111128.cos.ap-shanghai.myqcloud.com/GPG/private_key.asc"
-PUBLIC_KEY_URL="https://mzapi-help-1329111128.cos.ap-shanghai.myqcloud.com/GPG/public_key.asc"
+# 2. 从环境变量读取密钥地址，未提供则使用默认值
+PRIVATE_KEY_URL=${PRIVATE_KEY_URL}
+PUBLIC_KEY_URL=${PUBLIC_KEY_URL}
 PRIVATE_KEY_FILE="private_key.asc"
 PUBLIC_KEY_FILE="public_key.asc"
 
