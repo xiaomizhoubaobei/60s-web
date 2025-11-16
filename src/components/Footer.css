@@ -1,0 +1,58 @@
+.homepage-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 20px 0;
+  margin-top: auto;
+}
+
+.homepage-footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.homepage-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.homepage-footer a:hover {
+  text-decoration: underline;
+}
+
+.homepage-footer p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6c757d;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .homepage-footer-content {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .homepage-footer p {
+    margin: 0 15px;
+  }
+}
+
+/* 暗黑模式支持 */
+[data-theme="dark"] .homepage-footer {
+  background-color: #2d3748;
+  border-top: 1px solid #4a5568;
+}
+
+[data-theme="dark"] .homepage-footer p {
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .homepage-footer a {
+  color: #90cdf4;
+}

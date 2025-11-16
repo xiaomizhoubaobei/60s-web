@@ -1,0 +1,87 @@
+.zhihu-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2f7 0%, #d6e4f0 100%);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.zhihu-page .detail-header {
+  background: linear-gradient(90deg, #007AFF 0%, #3a86ff 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+}
+
+.zhihu-page .category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.zhihu-page .news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.zhihu-page .news-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-top: 4px solid #007AFF;
+}
+
+.zhihu-page .news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.zhihu-page .news-image {
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.zhihu-page .news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.zhihu-page .news-card:hover .news-image img {
+  transform: scale(1.05);
+}
+
+.zhihu-page .news-content {
+  padding: 15px;
+}
+
+.zhihu-page .news-title {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.zhihu-page .news-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.zhihu-page .hot-badge {
+  background: #007AFF;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.zhihu-page .date {
+  color: #888;
+}

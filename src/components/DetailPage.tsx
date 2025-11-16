@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import './DetailPage.css';
 
@@ -19,22 +20,13 @@ interface ApiResponse {
   data: NewsItem[] | never;
 }
 
-interface DetailPageProps {
-  categoryId: string;
-  onBack: () => void;
-  isDarkMode: boolean;
-  toggleTheme: () => void;
-}
-
-export default function DetailPage({
-                                     categoryId,
-                                     onBack,
-                                     isDarkMode,
-                                     toggleTheme,
-                                   }: DetailPageProps) {
+export default function DetailPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const navigate = useNavigate();
+  const { categoryId } = useParams<{ categoryId: string }>();
 
   const categoryInfo = {
     '60s': { name: '每日60秒', icon: '📰', color: '#FF6B6B' },
@@ -46,13 +38,35 @@ export default function DetailPage({
     'translate': { name: '在线翻译', icon: '🌐', color: '#9B59B6' },
   };
 
-  const currentCategory = categoryInfo[categoryId as keyof typeof categoryInfo];
+  const currentCategory = categoryId ? categoryInfo[categoryId as keyof typeof categoryInfo] : undefined;
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    
+    if (newTheme) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  const onBack = () => {
+    navigate('/');
+  };
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      // 优化：将API端点映射移到组件外部或使用useMemo缓存
+      // 确保 categoryId 不是 undefined
+      if (!categoryId) {
+        setError('分类ID未定义');
+        return;
+      }
+      
       const endpoints: Record<string, string> = {
         '60s': `${API_BASE_URL}/60s`,
         'weibo': `${API_BASE_URL}/weibo`,
@@ -104,6 +118,13 @@ export default function DetailPage({
   };
 
   useEffect(() => {
+    // 初始化主题
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    
     if (categoryId !== 'translate') {
       fetchData();
     }
@@ -444,7 +465,7 @@ export default function DetailPage({
         <header
             className="detail-header"
             style={{
-              '--category-color': currentCategory?.color,
+              '--category-color': currentCategory?.color || '#000000',
             } as React.CSSProperties}
         >
           <button className="back-button" onClick={onBack}>
@@ -452,9 +473,9 @@ export default function DetailPage({
           </button>
           <div className="header-content">
             <div className="category-icon">
-              {currentCategory?.icon}
+              {currentCategory?.icon || '❓'}
             </div>
-            <h1>{currentCategory?.name}</h1>
+            <h1>{currentCategory?.name || '未知分类'}</h1>
           </div>
         </header>
 
@@ -489,13 +510,13 @@ export default function DetailPage({
                           created_at: data.created_at,
                         }))
                     )}
-                {['weibo', 'zhihu', 'baidu', 'douyin'].includes(categoryId) &&
+                {categoryId && ['weibo', 'zhihu', 'baidu', 'douyin'].includes(categoryId) &&
                     Array.isArray(data) &&
                     renderNewsData(data)}
               </div>
           )}
 
-          {!loading && !error && !data && categoryId !== 'translate' && (
+          {!loading && !error && !data && categoryId && categoryId !== 'translate' && (
               <div className="empty-state">
                 <p>暂无数据</p>
               </div>
