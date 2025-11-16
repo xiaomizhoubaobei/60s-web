@@ -1,43 +1,43 @@
 name: Build & Deploy to Aliyun OSS
 
 on:
-    pull_request:
-        branches: [main]
-        types: [closed]          # PR 合并后才触发
-        paths: ["src/**"]        # 只有 src 目录变更才执行
-    workflow_dispatch:         # 手动触发按钮
+  pull_request:
+    branches: [main]
+    types: [closed]          # PR 合并后才触发
+    paths: ["src/**"]        # 仅 src 变更才执行
+  workflow_dispatch:         # 手动触发
 
 jobs:
-    build:
-        # 只有 PR 被合并才继续（防止 PR 关闭但未合并也跑）
-        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
-        runs-on: ubuntu-latest
-        steps:
-            # 1. 拉代码
-            - name: Harden the runner (Audit all outbound calls)
-              uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
-              with:
-                  egress-policy: audit
-            - name: Checkout
-              uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-            # 2. 装 Node + 缓存 yarn
-            - name: Setup Node.js
-              uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-              with:
-                  node-version: 22
-                  cache: yarn
-            # 3. 装依赖
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
-            # 4. 构建
-            - name: Build
-              run: yarn build   # 产物默认输出到 dist/
-            # 5. 部署到阿里云 OSS
-            -   name: upload files to OSS
-                uses: fangbinwei/aliyun-oss-website-action@b9cc5868757aa0d42d30cd9a0df8da5169d66ff2 # v1.4.0
-                with:
-                    accessKeyId: ${{ secrets.OSS_KEY_ID }}
-                    accessKeySecret: ${{ secrets.OSS_KEY_SECRET }}
-                    bucket: ${{ secrets.OSS_BUCKET }}
-                    endpoint: ${{ secrets.OSS_ENDPOINT }}
-                    folder: "./dist"   # 本地构建产物目录
+  build:
+    # 仅当 PR 被合并 或 手动触发时运行
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build   # 产物默认输出到 dist/
+
+      - name: Upload files to OSS
+        uses: fangbinwei/aliyun-oss-website-action@b9cc5868757aa0d42d30cd9a0df8da5169d66ff2 # v1.4.0
+        with:
+          accessKeyId: ${{ secrets.OSS_KEY_ID }}
+          accessKeySecret: ${{ secrets.OSS_KEY_SECRET }}
+          bucket: ${{ secrets.OSS_BUCKET }}
+          endpoint: ${{ secrets.OSS_ENDPOINT }}
+          folder: ./dist

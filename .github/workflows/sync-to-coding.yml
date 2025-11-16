@@ -1,0 +1,52 @@
+name: 同步代码到CNB
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+    paths:
+      - "src/**"
+
+permissions:
+  contents: read
+
+jobs:
+  sync-code:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    if: |
+      !(
+        contains(github.event.sender.login, 'bot') ||
+        contains(github.event.workflow_run.head_commit.author.login, 'bot') ||
+        (github.event_name == 'pull_request' && (
+          contains(github.event.pull_request.user.login, 'bot') ||
+          github.event.pull_request.merged == true
+        ))
+      )
+    env:
+      CNB_USER: ${{ secrets.CNB_USER }}
+      CNB_EMAIL: ${{ secrets.CNB_EMAIL }}
+      CNB_TOKEN: ${{ secrets.CNB_TOKEN }}
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git User for CNB
+        run: |
+          git config --global user.name "${{ secrets.CNB_USER }}"
+          git config --global user.email "${{ secrets.CNB_EMAIL }}"
+
+      - name: Add CNB Remote
+        run: git remote add cnb https://${{ secrets.CNB_TOKEN }}@cnb.cool/XMZZUZHI/60s-web
+
+      - name: Push to CNB
+        run: git push cnb main
