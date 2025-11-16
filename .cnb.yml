@@ -6,7 +6,7 @@ $:
               - vscode
               - docker
           docker:
-              image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.5
+              image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
           stages:
               - name: 授予install_gpg_keys.sh权限
                 script:
@@ -18,7 +18,7 @@ $:
                     - echo "依赖完成"
               - name: 安装iflow
                 script:
-                    - npm i -g @iflow-ai/iflow-cli@latest
+
                     - echo "iflow安装完成"
               - name: 安装Git LFS
                 script:
@@ -34,6 +34,11 @@ $:
                 script:
                     - chmod +x /workspace/install_agents.sh
                     - /workspace/install_agents.sh
+              - name: 配置claude
+                script:
+                  - mkdir -p /root/.claude/settings.json
+                  - curl -o /root/.claude/settings.json https://astrbot.mizhoubaobei.top/claude.json
+                  - echo "已下载并替换 root/.claude/settings.json"
               - name: 添加Github远端
                 script:
                     - git remote add  github git@github.com:xiaomizhoubaobei/60s-web.git
