@@ -45,7 +45,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "helmet": "^8.1.0",
     "html-to-image": "^1.11.13",
     "http-errors": "^2.0.0",
