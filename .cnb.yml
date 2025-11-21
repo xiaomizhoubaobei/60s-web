@@ -20,7 +20,7 @@ $:
 
       - name: 安装iflow
         script:
-          npm i -g @iflow-ai/iflow-cli@latest
+          - npm i -g @iflow-ai/iflow-cli@latest
           - echo "iflow安装完成"
 
       - name: 安装Git LFS
