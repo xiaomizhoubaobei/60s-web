@@ -1,58 +1,44 @@
-$:
-    vscode:
-        - runner:
-              cpus: 16
-          services:
-              - vscode
-              - docker
-          docker:
-              image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
-          imports:
-            - https://cnb.cool/XMZZUZHI/key/-/blob/main/cnb.yml
-          stages:
-              - name: 授予install_gpg_keys.sh权限
-                script:
-                    - chmod +x /workspace/install_gpg_keys.sh
-              - name: 安装sudo更新APT源
-                script:
-                    - apt-get update
-                    - apt-get install -y sudo lsof net-tools
-                    - echo "依赖完成"
-              - name: 安装iflow
-                script:
+vscode:
+    runner:
+      cpus: 16
+    services:
+      - vscode
+      - docker
+    docker:
+      image: docker.cnb.cool/xmzzuzhi/cnb-docker/node:0.0.1
+    stages:
+      - name: 授予install_gpg_keys.sh权限
+        script:
+          - chmod +x /workspace/install_gpg_keys.sh
 
-                    - echo "iflow安装完成"
-              - name: 安装Git LFS
-                script:
-                    - sudo apt-get install -y git-lfs
-                    - git lfs install
-                    - echo "Git LFS安装完成"
-              - name: 下载并替换settings.json
-                script:
-                    - mkdir -p /root/.iflow
-                    - |
-                      if [ -n "${IFLOW_SETTINGS_URL:-}" ]; then
-                        curl -o /root/.iflow/settings.json "${IFLOW_SETTINGS_URL}"
-                        echo "已从环境变量下载并替换 /root/.iflow/settings.json"
-                      else
-                        echo "错误: IFLOW_SETTINGS_URL 环境变量未设置" >&2
-                        exit 1
-                      fi
-              - name: 安装iflow智能体
-                script:
-                    - chmod +x /workspace/install_agents.sh
-                    - /workspace/install_agents.sh
-              - name: 配置claude
-                script:
-                  - mkdir -p /root/.claude
-                  - |
-                    if [ -n "${CLAUDE_SETTINGS_URL:-}" ]; then
-                      curl -o /root/.claude/settings.json "${CLAUDE_SETTINGS_URL}"
-                      echo "已从环境变量下载并替换 /root/.claude/settings.json"
-                    else
-                      echo "错误: CLAUDE_SETTINGS_URL 环境变量未设置" >&2
-                      exit 1
-                    fi
-              - name: 添加Github远端
-                script:
-                    - git remote add  github https://github.com/xiaomizhoubaobei/60s-web.git
+      - name: 安装sudo更新APT源
+        script:
+          - apt-get update
+          - apt-get install -y sudo lsof net-tools
+          - echo "依赖完成"
+
+      - name: 安装iflow
+        script:
+          npm i -g @iflow-ai/iflow-cli@latest
+          - echo "iflow安装完成"
+
+      - name: 安装Git LFS
+        script:
+          - sudo apt-get install -y git-lfs
+          - git lfs install
+          - echo "Git LFS安装完成"
+
+      - name: 下载并替换settings.json
+        script:
+          - mkdir -p /root/.iflow
+          - curl -o /root/.iflow/settings.json https://astrbot.mizhoubaobei.top/1.json
+          - echo "已下载并替换 /root/.iflow/settings.json"
+
+      - name: 安装iflow智能体
+        script:
+          - chmod +x /workspace/install_agents.sh
+          - /workspace/install_agents.sh
+
+      - name: 添加Github远端
+        script:
+          - git remote add github https://github.com/xiaomizhoubaobei/60s-web.git
